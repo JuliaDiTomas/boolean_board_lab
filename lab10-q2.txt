@@ -1,0 +1,47 @@
+﻿`timescale 1ns / 1ps
+
+
+module counter(input clk, en, rst, output reg [15:0] count);
+    always @(posedge clk, posedge rst) begin
+        if (rst) count <= 0;
+        else if (en) count <= count + 1;
+    end
+endmodule
+
+
+module clkdiv(input clk, output reg clkdiv);
+    wire [15:0] count;
+    reg rst;
+    counter c(clk, 1, rst, count);
+    always @(posedge clk) begin
+        if (count==(49999)) begin
+            rst <= 1;
+            clkdiv <= ~clkdiv;
+        end else
+            rst <= 0;
+    end
+endmodule
+            
+
+
+module lab10q2(
+   input mclk,
+   input [15:0] sw,
+   input [3:0] btn, //Sixteen switches
+   output [15:0] led //Sixteen LEDs
+   //output [7:0] D1_seg, D0_seg, //Seven segment displays
+   //output [3:0] D1_a, D0_a //Display selector (0 means that seven-segment display digit is on)
+);
+
+
+ wire slowClock;
+ reg [15:0]temp;
+ clkdiv c(mclk, slowClock);
+  
+ always @(posedge slowClock) begin
+    temp <= led + 1;
+ end
+ 
+ assign led = temp;
+ 
+endmodule

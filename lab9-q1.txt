@@ -1,0 +1,12 @@
+﻿// Code your design here
+module ff(input c, d, output q, qn);
+        wire temp1, temp2, temp3, temp4;
+  
+  nand #1 (temp1, temp2, temp4);
+  nand #1 (temp2, c, temp1);
+  nand #1 (temp3, c, temp2, temp4);
+  nand #1 (temp4, d, temp3);
+  nand #1 (q, temp2, qn);
+  nand #1 (qn, temp3, q);
+  
+endmodule

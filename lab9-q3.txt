@@ -1,0 +1,21 @@
+﻿`timescale 1ns / 1ps
+
+
+module lab9q3(
+   input mclk,
+   input [15:0] sw,
+   input [3:0] btn, //Sixteen switches
+   output [15:0] led //Sixteen LEDs
+   //output [7:0] D1_seg, D0_seg, //Seven segment displays
+   //output [3:0] D1_a, D0_a //Display selector (0 means that seven-segment display digit is on)
+);
+
+
+    reg [15:0] temp;
+    assign led[15:0] = temp;
+    
+ always @(posedge btn[0]) begin
+    temp = {sw[15], led[15:1]};
+  end
+  
+endmodule

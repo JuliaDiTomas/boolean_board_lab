@@ -1,0 +1,1 @@
+﻿There is a delay of two units from the rising edge of the clock to when Q latches onto the data, whether the data is a 1 or a 0. This is because there are two ‘levels’ of gates between the input D and Q. It takes one delay unit for the wires connected to the outputs of the leftmost four NAND gates to update, and another for the outputs of the rightmost 2 NAND gates (Q and Qn).

@@ -1,0 +1,86 @@
+﻿`timescale 1ns / 1ps
+
+
+// Inputs 4 bit number and outputs 8 bit number to display input as hex digit on Boolean board's7-segment display
+module hexEncode(input [3:0] bin, output [7:0] hex);
+  assign hex = (bin == 0) ? 8'b11000000 :
+    (bin == 1) ? 8'b11111001 :
+    (bin == 2) ? 8'b10100100 :
+    (bin == 3) ? 8'b10110000 :
+    (bin == 4) ? 8'b10011001 :
+    (bin == 5) ? 8'b10010010 :
+    (bin == 6) ? 8'b10000010 :
+    (bin == 7) ? 8'b11111000 :
+    (bin == 8) ? 8'b10000000 :
+    (bin == 9) ? 8'b10010000 :
+    (bin == 10) ? 8'b10001000 :
+    (bin == 11) ? 8'b10000011 :
+    (bin == 12) ? 8'b11000110 :
+    (bin == 13) ? 8'b10100001 :
+    (bin == 14) ? 8'b10000110 :
+    (bin == 15) ? 8'b10001110 : 8'b11111111;
+      
+endmodule   
+
+
+module counter(input clk, en, rst, output reg [15:0] count);
+    always @(posedge clk, posedge rst) begin
+        if (rst) count <= 0;
+        else if (en) count <= count + 1;
+    end
+endmodule
+
+
+module clkdiv(input clk, output reg clkdiv);
+    wire [15:0] count;
+    reg rst;
+    counter c(clk, 1, rst, count);
+    always @(posedge clk) begin
+        if (count==(49999)) begin
+            rst <= 1;
+            clkdiv <= ~clkdiv;
+        end else
+            rst <= 0;
+    end
+endmodule
+            
+
+
+module lab10q3(
+   input mclk,
+   input [15:0] sw,
+   input [3:0] btn, //Sixteen switches
+   output [15:0] led, //Sixteen LEDs
+   output [7:0] D1_seg, D0_seg, //Seven segment displays
+   output [3:0] D1_a, D0_a //Display selector (0 means that seven-segment display digit is on)
+);
+
+
+ wire slowClock;
+ wire [7:0] a;
+ reg [3:0] in;
+ reg [3:0] temp;
+ reg [1:0] cycle = 0;
+ 
+ hexEncode h(in, a);
+ clkdiv c(mclk, slowClock);
+  
+ always @(posedge slowClock) begin
+    in = (cycle==0) ? sw[15:12] :
+         (cycle==1) ? sw[11:8] :
+         (cycle==2) ? sw[7:4] : sw[3:0];
+     
+     temp = (cycle==0) ? 4'b0111 :
+         (cycle==1) ? 4'b1011 :
+         (cycle==2) ? 4'b1101 : 4'b1110;
+         
+     cycle = cycle + 1;
+     
+ end
+ 
+ assign D0_seg = a;
+ assign D0_a = temp;
+ assign D1_a = 1'b1111;
+ //assign led = temp;
+ 
+endmodule
